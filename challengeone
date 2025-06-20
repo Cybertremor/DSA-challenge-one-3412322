@@ -1,1 +1,46 @@
+class TrieNode {
+    constructor() {
+        this.children = {};
+        this.suggestions = [];
+    }
+}
 
+class SearchSuggestionSystem {
+    constructor(products) {
+        this.root = new TrieNode();
+        products.sort(); // Sort lexicographically
+        for (const product of products) {
+            this.insert(product);
+        }
+    }
+
+    insert(product) {
+        let node = this.root;
+        for (const char of product) {
+            if (!node.children[char]) {
+                node.children[char] = new TrieNode();
+            }
+            node = node.children[char];
+            if (node.suggestions.length < 3) {
+                node.suggestions.push(product);
+            }
+        }
+    }
+
+    getSuggestions(searchWord) {
+        let node = this.root;
+        const result = [];
+
+        for (const char of searchWord) {
+            if (node && node.children[char]) {
+                node = node.children[char];
+                result.push(node.suggestions);
+            } else {
+                node = null;
+                result.push([]);
+            }
+        }
+
+        return result;
+    }
+}
